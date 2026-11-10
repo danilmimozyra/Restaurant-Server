@@ -4,6 +4,10 @@ const connectionStatus = document.querySelector("#connectionStatus");
 const protocol = location.protocol === "https:" ? "wss:" : "ws:";
 const ws = new WebSocket(`${protocol}//${location.host}`);
 
+const orderIdInput = document.querySelector("#orderId");
+const sendOrderButton = document.querySelector("#sendOrder");
+const orderResult = document.querySelector("#orderResult");
+
 ws.addEventListener("open", () => {
   connectionStatus.textContent = "Connected";
 });
@@ -38,3 +42,36 @@ function renderOrders(orders) {
     ordersTable.appendChild(row);
   }
 }
+
+sendOrderButton.addEventListener("click", async () => {
+  const id = orderIdInput.value.trim();
+
+  if (!id) {
+    orderResult.textContent = "Please enter an order ID.";
+    return;
+  }
+
+  sendOrderButton.disabled = true;
+  orderResult.textContent = "Sending order...";
+
+  try {
+    const response = await fetch("/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (response.status === 202) {
+      orderResult.textContent = `Order ${id} accepted.`;
+      orderIdInput.value = "";
+    } else {
+      orderResult.textContent = `Failed to send order (HTTP ${response.status}).`;
+    }
+  } catch (error) {
+    orderResult.textContent = `Request failed: ${error.message}`;
+  } finally {
+    sendOrderButton.disabled = false;
+  }
+});

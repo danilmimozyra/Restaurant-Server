@@ -28,12 +28,34 @@
         th {
             background: #f2f2f2;
         }
+
+        .order-form {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .order-form input {
+            padding: 10px;
+            flex: 1;
+        }
+
+        .order-form button {
+            padding: 10px 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
     <h1>Restaurant Orders</h1>
     <p id="connectionStatus">Connecting...</p>
+    <div class="order-form">
+        <input type="text" id="orderId" placeholder="Enter order ID">
+        <button id="sendOrder">Send Order</button>
+    </div>
+
+    <p id="orderResult"></p>
 
     <table>
         <thead>
